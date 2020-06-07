@@ -17,6 +17,7 @@ from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
+
 directory = "C:\\Users\\t8455242\\Desktop\\WinPython-64bit-3.6.2.0Qt5\\notebooks\\ניתוח סוציומטרי\\dir"
 
 word_index = {
@@ -83,7 +84,6 @@ def num_to_color(name, number):
 
 def create_docx_dir(input_dir, output_dir):
     for filename in os.listdir(input_dir):
-        print(filename)
         if filename.endswith(".xlsx"):
             sheet = pd.read_excel(input_dir + "\\" + filename)
             sheet = np.array(sheet)
@@ -97,10 +97,15 @@ def create_docx_dir(input_dir, output_dir):
 
                 # print(excel_index[2])
                 index = int(excel_index[value])
-                print(sheet[-1, index + 1])
-                cell.text = str(int(sheet[-1, index + 1]))
+
+                # Add to docx file
+                if value in values:
+                    cell.text = sheet[-1, index + 1]
+                else:
+                    cell.text = str(int(sheet[-1, index + 1]))
+                    cell._tc.get_or_add_tcPr().append(num_to_color(value, int(sheet[-1, int(excel_index[value]) + 1])))
+
                 cell.paragraphs[0].alignment = WD_ALIGN_VERTICAL.CENTER
-                cell._tc.get_or_add_tcPr().append(num_to_color(value, int(sheet[-1, int(excel_index[value]) + 1])))
 
             text_neg = ""
             text_pos = ""
@@ -112,13 +117,44 @@ def create_docx_dir(input_dir, output_dir):
                 if not type(point) == str:
                     continue
                 text_pos = text_pos + "\"" + point + "\"" + "\n\n"
-            cell = table.cell(int(word_index['שיפור'][0]), int(word_index['שיפור'][1]))
-            cell.text = text_neg
+
+            # cell = table.cell(int(word_index['שיפור'][0]), int(word_index['שיפור'][1]))
+            # cell.text = text_neg
+            # cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+            # cell = table.cell(int(word_index['שימור'][0]), int(word_index['שימור'][1]))
+            # cell.text = text_pos
+            # cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+
+            cell = table.cell(int(word_index['ציטוטים'][0]), int(word_index['ציטוטים'][1]))
+            cell.text = (
+                "לשימור"
+                + "\n\n"
+                + text_pos
+                + "\n\n\n"
+                + "לשיפור"
+                + "\n\n"
+                + text_neg
+                + "\n\n"
+            )
             cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
-            cell = table.cell(int(word_index['שימור'][0]), int(word_index['שימור'][1]))
-            cell.text = text_pos
-            cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
+
+            font = cell.paragraphs[0].runs[0].font
+            font.size = Pt(12)
+            font.name = "David"
+
+
+            # set heading
             p = document.paragraphs[1]
-            name = sheet[0, 0]
-            p.text = p.text + " " + str(filename) + " "
-            document.save(output_dir + '//' + p.text + '.docx')
+
+            title = filename.split(".xlsx")[0]
+            print(title)
+            p.text = "שיקוף שאלון סוציומטרי - " + str(title) + "\n"
+
+            font = p.runs[0].font
+            font.size = Pt(16)
+            font.name = "David"
+            font.bold = True
+
+            print(output_dir)
+
+            document.save(output_dir + title + '.docx')

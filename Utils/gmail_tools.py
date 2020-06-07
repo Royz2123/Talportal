@@ -67,11 +67,24 @@ def stage1(path):
     fromaddr = "talportal.talpiot@gmail.com"
     psw = "CyberCyber1*"
     toaddr = ["talportal.talpiot@gmail.com"]
-    # toaddr = ["amit.dovner.40@gmail.com"]
+    toaddr = ["adim.talpiot@gmail.com", "alonb.39.talpiot@gmail.com"]
     # toaddr = ["alonb.39.talpiot@gmail.com"]
 
     subject = "סוציומטרי מחזור מא"  # Sociometry machzor 41"
-    body = "היי עדי! מה שלומך? איך בבית? מצרפים את קבצי הסוציומטרי של מחזור מא, בהצלחה!!!"
+    body = (
+            u'\u202B'
+            + "היי עדי! מה שלומך?"
+            + "\n\n"
+            + " איך בבית? מצרפים את קבצי הסוציומטרי של מחזור מא, בתיקייה מכווצת. הסיסמא לתיקייה היא:"
+            + "\n\n"
+            + "sociometry2020"
+            + "\n\n"
+            + "בגדול כל הקבצים שאת צריכה לערוך זה רק התיקייה קבצים_חניכים, אשר מכילה את כל הטפסים של המחזור כבר בוורד, תערכי על גבי הוורדים עצמם"
+            + "\n\n"
+            + "בברכה,"
+            + "\n"
+            + "צוות Talporteam!"
+    )
     sendGmail(fromaddr, toaddr, subject, body, path, psw)
 
 
@@ -83,7 +96,6 @@ def stage2(path):
     subject = "סוציומטרי אחרי עריכה של מחזור מא 4"  # Sociometry machzor 41"
     body = "היי מפקדים מצורפים טפסי סוציומטרי"
     sendGmail(fromaddr, toaddr, subject, body, path, psw)
-
 
 # path = "./try.zip"
 # stage2(path)

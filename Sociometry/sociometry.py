@@ -13,7 +13,10 @@ MAIN_FOLDER = "./Sociometry/" + "סוציומטרי מא סמסטר ג" + "_" + 
 MAIN_FOLDER = "./Sociometry/" + "test" + "_" + str(random.randint(0, 1000)) + "/"
 MAIN_FOLDER = "./Sociometry/" + "סוציומטרי לדוגמא" + "/"
 MAIN_FOLDER = "./Sociometry/" + "סוציומטרי_ניסוי" + "/"
+MAIN_FOLDER = "./Sociometry/" + "סוציומטרי_סופי_מא" + "/"
 
+
+PASSWORD = "sociometry2020"
 
 def stage_1():
     try:
@@ -41,7 +44,7 @@ def stage_1():
 
     zip_path = "./Sociometry/Outputs.zip"
     docx_tools.create_docx_dir(outputs_path + "חניכים" + "/", outputs_path + "חניכים_קבצים" + "/")
-    zip_tools.compress(outputs_path, zip_path)
+    zip_tools.compress(outputs_path, zip_path, PASSWORD)
 
     # Send to Adi metula
     gmail_tools.stage1(zip_path)

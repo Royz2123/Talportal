@@ -39,16 +39,28 @@ class SociometryTools:
         # Turn them into dataframes
         frames = [x.parse(x.sheet_names[0], header=None, index_col=None) for x in excels]
 
+        # FOR MA, put another row
+        new_frames = []
+        for frame in frames:
+            dfs = np.split(frame, [1], axis=0)
+            example_row = pd.DataFrame([np.ones(16)])
+            new_frames.append(pd.concat([dfs[0], example_row, dfs[1]], ignore_index=True))
+        frames = new_frames
+
         height_width = (
             len(excel_dirs) + 2,
             NUM_NUMERICALS + NUM_Q_OPEN + 1
         )
 
         # (number_of_persons + 2, number of questions + 1)
-        print(height_width)
         shapes = [frames[i].shape == height_width for i in range(len(frames))]
 
-        print([frames[i].shape for i in range(len(frames))])
+        for i, shape in enumerate(shapes):
+            if not shape:
+                print(excel_dirs[i])
+
+        # print(height_width)
+        # print([frames[i].shape for i in range(len(frames))])
 
         if not all(shapes):
             print("Not all excels are the right size")
@@ -68,7 +80,6 @@ class SociometryTools:
 
         # The amount of machzor members is the length of the first frame,
         # minus one (because of the header)
-        num_machzor_members = len(frames[0][1]) - 1
 
         # is it really necessary?
         # # Loop over all the frames and change the names to numbers
@@ -94,6 +105,7 @@ class SociometryTools:
 
         # Calculates means ands std
         people_means = np.zeros((height_width[0] - 2, NUM_NUMERICALS))
+        people_plus_minus = np.zeros((height_width[0] - 2, NUM_NUMERICALS, 2))
 
         # Gets names of all people
         names = frames[0][0][1:].values
@@ -106,6 +118,9 @@ class SociometryTools:
 
             for j in range(NUM_NUMERICALS):
                 people_means[i, j] = np.mean(person_values[j])
+                print(person_values[j])
+                people_plus_minus[i, j, 1] = np.sum([value == 1 for value in person_values[j]])
+                people_plus_minus[i, j, 0] = np.sum([value == 3 for value in person_values[j]])
 
         means = np.mean(people_means, axis=0)
         stds = np.std(people_means, axis=0)
@@ -133,8 +148,21 @@ class SociometryTools:
             normalized_to_print = {frame.columns[i]: person_normalized[i] for i in range(len(person_normalized))}
             frame = frame.append(normalized_to_print, ignore_index=True)
 
-            person_grade = ['ציון סופי'] + [str(self.grade(person_normalized[i], i - 1)) for i in range(1, 14)] + [None,
-                                                                                                                   None]
+            # calculate grade for person
+            person_grade = ['ציון סופי']
+            for question_index in range(1, 14):
+                # If questions are on a 1-3 scale do this
+                if 8 <= question_index <= 13:
+                    person_grade.append(
+                        f"+{int(people_plus_minus[k, question_index - 1, 0])}\n"
+                        + f"-{int(people_plus_minus[k, question_index - 1, 1])}"
+                    )
+
+                # Otherwise get scores base on stds
+                else:
+                    person_grade.append(str(self.grade(person_normalized[question_index], question_index - 1)))
+            person_grade.append([None, None])
+
             grade_to_print = {frame.columns[i]: person_grade[i] for i in range(len(person_grade))}
             frame = frame.append(grade_to_print, ignore_index=True)
 
@@ -160,9 +188,6 @@ class SociometryTools:
             res = 5
         elif normalized_score >= 1.5:
             res = 6
-
-        if 7 <= question_index <= 12:  # educational questions
-            res = (res + 1) // 2
 
         return res
 

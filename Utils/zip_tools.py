@@ -12,5 +12,8 @@
 import subprocess
 import os
 
-def compress(dir_path, zip_name):
-    subprocess.call('"C:\\Program Files\\7-Zip\\7z.exe" a -mem=AES256 -pCyberCyber1* -y ' + zip_name + " " + dir_path + "*", shell=True)
+
+def compress(dir_path, zip_name, password):
+    subprocess.call(
+        '"C:\\Program Files\\7-Zip\\7z.exe" a -mem=AES256 -p' + password + ' -y ' + zip_name + " " + dir_path + "*",
+        shell=True)
