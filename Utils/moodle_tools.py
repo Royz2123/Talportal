@@ -39,3 +39,13 @@ def save_stage_2(dir):
     moodle.get_token()
     meubad_id = get_meubad_assign_id(moodle)
     save_submissions_to_dir(moodle, dir, meubad_id)
+
+
+def get_course_all_quizzes(course_id):
+    moodle = web_services.MoodleAPI()
+    moodle.get_token()
+    # users = moodle.get_enrolled_users(course_id)
+    quiz_id = moodle.get_quizzes(course_id)["quizzes"][0]["id"]
+    attempt_id = moodle.get_user_quiz_attempts(quiz_id, 36)["attempts"][0]["id"]
+    review = moodle.get_attempt_review(attempt_id)
+

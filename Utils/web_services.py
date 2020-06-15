@@ -50,6 +50,31 @@ class MoodleAPI:
         }
         return self.make_api_call("mod_assign_get_assignments", params)
 
+    def get_quizzes(self, course_id=2):
+        params = {
+            "courseids[0]": course_id
+        }
+        return self.make_api_call("mod_quiz_get_quizzes_by_courses", params)
+
+    def get_user_quiz_attempts(self, quiz_id, user_id):
+        params = {
+            "quizid": quiz_id,
+            "userid": user_id
+        }
+        return self.make_api_call("mod_quiz_get_user_attempts", params)
+
+    def get_enrolled_users(self, course_id):
+        params = {
+            "courseid": course_id
+        }
+        return self.make_api_call("core_enrol_get_enrolled_users", params)
+
+    def get_attempt_review(self, attempt_id):
+        params = {
+            "attemptid": attempt_id
+        }
+        return self.make_api_call("mod_quiz_get_attempt_review", params)
+
     def get_submissions(self, assign_id):
         data = self.make_api_call(
             "mod_assign_get_submissions",

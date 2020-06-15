@@ -1,8 +1,10 @@
-import Sociometry.sociometry as sociometry
+# import Sociometry.sociometry as sociometry
+from Utils import moodle_tools
 
 
 def main():
-    sociometry.stage_1()
+    moodle_tools.get_course_all_quizzes(2)
+    # sociometry.stage_1()
 
 
 if __name__ == '__main__':
