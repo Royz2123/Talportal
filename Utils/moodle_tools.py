@@ -45,6 +45,7 @@ def get_course_all_quizzes(course_id):
     moodle = web_services.MoodleAPI()
     moodle.get_token()
     # users = moodle.get_enrolled_users(course_id)
+    # only one quiz per course,
     quiz_id = moodle.get_quizzes(course_id)["quizzes"][0]["id"]
     attempt_id = moodle.get_user_quiz_attempts(quiz_id, 36)["attempts"][0]["id"]
     review = moodle.get_attempt_review(attempt_id)
